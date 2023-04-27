@@ -10,7 +10,7 @@ servidor.on('connection', (socket)=>{
 
     // Recibe la informacion del cliente y la muestra
     socket.on('data', (data)=>{
-        console.log('Mensaje recibido desde el cliente:' + data + '.')
+        console.log('Mensaje recibido desde el cliente: ' + data + '.')
     })
 
     // Avisa cuando cierra la comunicacion
