@@ -1,20 +1,20 @@
-
-import "./style.css"
-import { useReducer } from "react";
-import io from "socket.io-client";
-import { useEffect, useState } from "react";
-
+import { useReducer } from "react"
 import DigitButton from "./DigitButton"
 import OperationButton from "./OperationButton"
+
+import './style.css'
+import "./App.css";
+import io from "socket.io-client";
+import { useEffect, useState } from "react";
 
 const socket = io.connect("http://localhost:3001");
 
 export const ACTIONS = {
-  ADD_DIGIT: 'add-digit',
-  CHOOSE_OPERATION: 'choose-operation',
-  CLEAR: 'clear',
-  DELETE_DIGIT: 'delete-digit',
-  EVALUATE: 'evaluate'
+  ADD_DIGIT: "add-digit",
+  CHOOSE_OPERATION: "choose-operation",
+  CLEAR: "clear",
+  DELETE_DIGIT: "delete-digit",
+  EVALUATE: "evaluate",
 }
 
 function reducer(state, { type, payload }) {
@@ -104,8 +104,14 @@ function reducer(state, { type, payload }) {
 }
 
 function evaluate({ currentOperand, previousOperand, operation }) {
+
   const prev = parseFloat(previousOperand)
   const current = parseFloat(currentOperand)
+
+  const sendMessage = () => {
+    socket.emit("send_message", { message: "Hola"});
+  };
+
   if (isNaN(prev) || isNaN(current)) return ""
   let computation = ""
   switch (operation) {
@@ -137,73 +143,66 @@ function formatOperand(operand) {
 }
 
 function App() {
-  //Room State
-  const [room, setRoom] = useState("");
 
-  // Messages States
-  const [message, setMessage] = useState("");
-  const [messageReceived, setMessageReceived] = useState("");
-
-  const joinRoom = () => {
-    if (room !== "") {
-      socket.emit("join_room", room);
-    }
-  };
-
-  const sendMessage = () => {
-    socket.emit("send_message", { message, room });
-  };
-
-  useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setMessageReceived(data.message);
-    });
-  }, [socket]);
+    // Messages States
+    const [message, setMessage] = useState("");
+    const [messageReceived, setMessageReceived] = useState("");
+  
+    const sendMessage = () => {
+      socket.emit("send_message", { message: "Hola"});
+    };
+  
+    useEffect(() => {
+      socket.on("receive_message", (data) => {
+        setMessageReceived(data.message);
+      });
+    }, [socket]);
 
   const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(
-      reducer,
-      {}
-    )
-  
-    return (
-      <div className="calculator-grid">
-        <div className="output">
-          <div className="previous-operand">
-            {formatOperand(previousOperand)} {operation}
-          </div>
-          <div className="current-operand">{formatOperand(currentOperand)}</div>
+    reducer,
+    {}
+  )
+
+  return (
+    <div className="calculator-grid">
+      <div className="output">
+        <div className="previous-operand">
+          {formatOperand(previousOperand)} {operation}
         </div>
-        <button
-          className="span-two"
-          onClick={() => dispatch({ type: ACTIONS.CLEAR })}
-        >
-          AC
-        </button>
-        <button onClick={() => dispatch({ type: ACTIONS.DELETE_DIGIT })}>
-          DEL
-        </button>
-        <OperationButton operation="÷" dispatch={dispatch} />
-        <DigitButton digit="1" dispatch={dispatch} />
-        <DigitButton digit="2" dispatch={dispatch} />
-        <DigitButton digit="3" dispatch={dispatch} />
-        <OperationButton operation="*" dispatch={dispatch} />
-        <DigitButton digit="4" dispatch={dispatch} />
-        <DigitButton digit="5" dispatch={dispatch} />
-        <DigitButton digit="6" dispatch={dispatch} />
-        <OperationButton operation="+" dispatch={dispatch} />
-        <DigitButton digit="7" dispatch={dispatch} />
-        <DigitButton digit="8" dispatch={dispatch} />
-        <DigitButton digit="9" dispatch={dispatch} />
-        <OperationButton operation="-" dispatch={dispatch} />
-        <DigitButton digit="." dispatch={dispatch} />
-        <DigitButton digit="0" dispatch={dispatch} />
-        <button
-          className="span-two"
-          onClick={() => dispatch({ type: ACTIONS.EVALUATE })}
-        >
-          =
-        </button>
+        <div className="current-operand">{formatOperand(currentOperand)}</div>
       </div>
+      <button
+        className="span-two"
+        onClick={() => dispatch({ type: ACTIONS.CLEAR })}
+      >
+        AC
+      </button>
+      <button onClick={() => dispatch({ type: ACTIONS.DELETE_DIGIT })}>
+        DEL
+      </button>
+      <OperationButton operation="÷" dispatch={dispatch} />
+      <DigitButton digit="1" dispatch={dispatch} />
+      <DigitButton digit="2" dispatch={dispatch} />
+      <DigitButton digit="3" dispatch={dispatch} />
+      <OperationButton operation="*" dispatch={dispatch} />
+      <DigitButton digit="4" dispatch={dispatch} />
+      <DigitButton digit="5" dispatch={dispatch} />
+      <DigitButton digit="6" dispatch={dispatch} />
+      <OperationButton operation="+" dispatch={dispatch} />
+      <DigitButton digit="7" dispatch={dispatch} />
+      <DigitButton digit="8" dispatch={dispatch} />
+      <DigitButton digit="9" dispatch={dispatch} />
+      <OperationButton operation="-" dispatch={dispatch} />
+      <DigitButton digit="." dispatch={dispatch} />
+      <DigitButton digit="0" dispatch={dispatch} />
+      <button
+        className="span-two"
+        onClick={() => dispatch({ type: ACTIONS.EVALUATE })}
+      >
+        =
+      </button>
+    </div>
   )
 }
-export default App;
+
+export default App
