@@ -57,7 +57,7 @@ function App() {
 
       <div className="app-title">
 
-        <h1> Basic Form Calculator</h1>
+        <h1>Calculadora</h1>
 
       </div>
 

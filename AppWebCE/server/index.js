@@ -29,7 +29,7 @@ io.on("connection", (socket) => {
   socket.on("send_message", (client_json) => {
 
     // muestra los valores del json enviado por el cliente
-    console.log(typeof(parseFloat(client_json.value1)))
+    console.log(client_json.value1)
     console.log(client_json.value2)
     console.log(client_json.operation)
 
